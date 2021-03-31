@@ -50,7 +50,11 @@ class Atom
     
     sf::Vector2f exertForce(int targetType, sf::Vector2f distance);
 
-    void tick();
+    void tick(sf::FloatRect boundaries);
     
     void draw(sf::RenderTarget& target);
+
+
+    const int& getType() const {return m_type; }
+    const sf::Vector2f& getPosition() const {return m_position; }
 };

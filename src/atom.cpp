@@ -8,11 +8,14 @@ Atom::Atom(AtomParameters* parameters, int type, sf::Vector2f startPosition, sf:
     m_velocity(startVelocity),
     m_force(0.f, 0.f)
 {
+    printVector(startPosition);
     m_representation.emplace_back(m_position, m_parameters->types[m_type].color);
     for(auto &v: m_parameters->types[m_type].shape)
     {
 	m_representation.emplace_back(v + m_position, m_parameters->types[m_type].color);
     }
+    m_representation.emplace_back(m_parameters->types[m_type].shape[0] + m_position,
+				  m_parameters->types[m_type].color);
 }
 
 void Atom::addForce(sf::Vector2f force)
@@ -56,17 +59,20 @@ sf::Vector2f Atom::exertForce(int targetType, sf::Vector2f connector)
     }
 }
 
-void Atom::tick()
+void Atom::tick(sf::FloatRect boundaries)
 {
     sf::Vector2f oldPosition = m_position;
-    m_velocity = m_force/m_parameters->types[m_type].weight;
+    m_velocity += m_force/m_parameters->types[m_type].weight;
     m_force = sf::Vector2f(0.f, 0.f);
     m_position += m_velocity;
-
-    sf::Vector2f movement = m_position - oldPosition;
+    while(m_position.x < boundaries.left)                    m_position.x += boundaries.width;
+    while(m_position.x > boundaries.left + boundaries.width) m_position.x -= boundaries.width;
+    while(m_position.y < boundaries.top)                     m_position.y += boundaries.height;
+    while(m_position.y > boundaries.top + boundaries.height) m_position.y -= boundaries.height;
+    
     for(auto &v: m_representation)
     {
-	v.position += movement;
+	v.position += m_position - oldPosition;
     }
 }
 
