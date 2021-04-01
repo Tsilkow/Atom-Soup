@@ -13,21 +13,33 @@
 #include "commons.hpp"
 
 
+struct Relation
+{
+    int sign; // -1 = repulsion, 0 = neutral, 1 = attraction
+    float maxDistance;  // maximal relation distance - how far away can two atoms be to still affect each other
+};
+
 struct AtomType
 {
     float size;
     float weight;
     sf::Color color;
     std::vector< sf::Vector2f > shape;
-    std::vector< int > relations;
+    std::vector< Relation > relations;
 };
 
 struct AtomParameters
 {
     std::vector< AtomType > types;
-    float maxRelDist; // maximal relation distance - how far away can two atoms be to still affect each other
     float peakRelStr; // peak relation strength - greatest strength the relation between two atoms can exert
+    float peakRepStr; // peak repel strength
+    float friction;
+    
+    void print();
 };
+
+std::vector< AtomType > generateAtomTypes
+(int typeTotal, pairF sizeRange, pairF weightRange, pairF maxDistanceRange);
 
 class Atom
 {
@@ -41,7 +53,7 @@ class Atom
 
     float calcRepelStr(float distance);
 	
-    float calcRelStr(float distance);
+    float calcRelStr(float distance, int targetType);
 
     public:
     Atom(AtomParameters* parameters, int type, sf::Vector2f startPosition, sf::Vector2f startVelocity);

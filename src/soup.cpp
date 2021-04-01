@@ -11,8 +11,8 @@ Soup::Soup(AtomParameters* AParams, sf::RenderWindow* window, int atomTotal, sf:
 	m_atoms.emplace_back(m_AParams,
 			     RandomI(0, m_AParams->types.size()-1),
 			     Random2f(m_boundaries),
-			     sf::Vector2f(0.f, 0.f));
-			     /*makeVector(RandomF(0.f, 10.f), RandomF(0, 2*M_PI))*/
+			     //sf::Vector2f(0.f, 0.f));
+			     makeVector(RandomF(0.f, 100.f), RandomF(0, 2*M_PI)));
     }
 }
 

@@ -14,45 +14,27 @@
 #include "atom.hpp"
 #include "soup.hpp"
 
+/*
+ * to try:
+ * randomizing relations distances
+ * bigger area (smaller atoms)
+ */
 
 using namespace std;
 
 int main()
 {
     srand(time(NULL));
-    
-    std::vector< AtomType > atomTypes;
-    atomTypes.push_back(
-	   {
-	       10.f,
-	       1.f,
-	       sf::Color(255, 128,   0),
-	       {{10.f, 0.f}, {0.f, 10.f}, {-10.f, 0.f}, {0.f, -10.f}},
-	       {1, 0, -1}
-	   });
-    atomTypes.push_back(
-	   {
-	       10.f,
-	       1.f,
-	       sf::Color(  0, 255,   0),
-	       {{10.f, 0.f}, {0.f, 10.f}, {-10.f, 0.f}, {0.f, -10.f}},
-	       {0, 1, 0}
-	   });
-    atomTypes.push_back(
-	   {
-	       10.f,
-	       1.f,
-	       sf::Color(255,   0, 255),
-	       {{10.f, 0.f}, {0.f, 10.f}, {-10.f, 0.f}, {0.f, -10.f}},
-	       {-1, -1, -1}
-	   });
-    
+        
     AtomParameters AParams =
     {
-	atomTypes,
-	50.f,
-	1.f
+        generateAtomTypes(6, make_pair(2.5f, 7.5f), make_pair(0.25f, 0.75f), make_pair(25.f, 75.f)),
+	1.f,
+	5.f,
+	0.02f
     };
+
+    AParams.print();
     
     sf::RenderWindow window(sf::VideoMode(800, 800), "Atom Soup");
     window.setFramerateLimit(60);
@@ -62,7 +44,7 @@ int main()
     mainView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
     window.setView(mainView);
 
-    Soup soup(&AParams, &window, 20, sf::FloatRect(-400.f, -400.f, 800.f, 800.f));
+    Soup soup(&AParams, &window, 40, sf::FloatRect(-400.f, -400.f, 800.f, 800.f));
 
     soup.simulate();
 	

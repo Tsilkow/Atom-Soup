@@ -1,6 +1,51 @@
 #include "atom.hpp"
 
 
+void AtomParameters::print()
+{
+    for(int i = 0; i < types.size(); ++i)
+    {
+	std::cout << "{\n";
+	std::cout << "size=" << types[i].size << "\n";
+	std::cout << "weight=" << types[i].size << "\n";
+	std::cout << "color=" << types[i].size << "\n";
+	std::cout << "relations={ ";
+	for(int j = 0; j < types[i].relations.size(); ++j)
+	{
+	    std::cout << "{ " << types[i].relations[j].sign << " " << types[i].relations[j].maxDistance << " }";
+	    if(j != types[i].relations.size()-1) std::cout << ", ";
+	    else std::cout << " } \n";
+	}
+	std::cout << "}\n";
+    }
+
+    std::cout << "peakRelStr=" << peakRelStr << "\n";
+    std::cout << "peakRepStr=" << peakRepStr << "\n";
+    std::cout << "friction=" << friction << "\n";
+}
+
+std::vector< AtomType > generateAtomTypes
+(int typeTotal, pairF sizeRange, pairF weightRange, pairF maxDistanceRange)
+{
+    std::vector< AtomType > result;
+    std::vector< sf::Color > palette = generatePalette(typeTotal);
+
+    for(int i=0; i < typeTotal; ++i)
+    {
+	float size = RandomF(sizeRange);
+	std::vector< sf::Vector2f > circle = genCircleShape(size);
+	
+	result.push_back({size, RandomF(weightRange), palette[i], circle, {}});
+	
+	for(int j=0; j < typeTotal; ++j)
+	{
+	    result.back().relations.push_back({RandomI(-1, 1), RandomF(maxDistanceRange)});
+	}
+    }
+
+    return result;
+}
+
 Atom::Atom(AtomParameters* parameters, int type, sf::Vector2f startPosition, sf::Vector2f startVelocity):
     m_parameters(parameters),
     m_type(type),
@@ -26,13 +71,14 @@ void Atom::addForce(sf::Vector2f force)
 float Atom::calcRepelStr(float distance)
 {
     float size = m_parameters->types[m_type].size;
-    return 1.f/((distance - size)/size);
+    return cos(distance * M_PI/2.f/size) * m_parameters->peakRepStr;
+    //return 1.f/((distance - size)/size);
 }
 
-float Atom::calcRelStr(float distance)
+float Atom::calcRelStr(float distance, int targetType)
 {
     float size = m_parameters->types[m_type].size;
-    float maxDist = m_parameters->maxRelDist;
+    float maxDist = m_parameters->types[m_type].relations[targetType].maxDistance;
 
     return std::max(0.f,
 		    m_parameters->peakRelStr * (1 - 2.f/(maxDist - size) *
@@ -49,12 +95,12 @@ sf::Vector2f Atom::exertForce(int targetType, sf::Vector2f connector)
     }
     else
     {
-	int relType = m_parameters->types[m_type].relations[targetType];
+	int relSign = m_parameters->types[m_type].relations[targetType].sign;
 	// if relation is neutral
-	if(relType == 0) return sf::Vector2f(0.f, 0.f);
+	if(relSign == 0) return sf::Vector2f(0.f, 0.f);
 	else
 	{
-	    return calcRelStr(distance) * connector/distance * ((float)relType);
+	    return calcRelStr(distance, targetType) * connector/distance * ((float)relSign);
 	}
     }
 }
@@ -62,9 +108,11 @@ sf::Vector2f Atom::exertForce(int targetType, sf::Vector2f connector)
 void Atom::tick(sf::FloatRect boundaries)
 {
     sf::Vector2f oldPosition = m_position;
+    m_velocity -= m_velocity*m_parameters->friction;
     m_velocity += m_force/m_parameters->types[m_type].weight;
     m_force = sf::Vector2f(0.f, 0.f);
     m_position += m_velocity;
+    
     while(m_position.x < boundaries.left)                    m_position.x += boundaries.width;
     while(m_position.x > boundaries.left + boundaries.width) m_position.x -= boundaries.width;
     while(m_position.y < boundaries.top)                     m_position.y += boundaries.height;

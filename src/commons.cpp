@@ -55,3 +55,58 @@ sf::Vector2f wrapConnector(sf::Vector2f a, sf::Vector2f b, sf::FloatRect boundar
     
     return a-b;
 }
+
+void printColor(sf::Color toPrint, bool enter)
+{
+    std::cout << "(" << toPrint.r << ", " << toPrint.g << ", " << toPrint.b << ")";
+    if(enter) std::cout << "\n";
+}
+
+float modulo(float a, float b)
+{
+    while(a >= b) a -= b;
+    while(a < 0) a += b;
+
+    return a;
+}
+
+float colorValue(float point)
+{
+    point = modulo(point, 1.f);
+    
+    if(point <= 1.f/6.f) return point*6.f;
+    if(point <= 3.f/6.f) return 1.f;
+    if(point <= 4.f/6.f) return (4.f/6.f - point)*6.f;
+    return 0.f;
+}
+
+sf::Color colorFromRange(float point)
+{
+    return sf::Color(std::round(255.f * colorValue(point + 2.f/6.f)),
+		     std::round(255.f * colorValue(point          )),
+		     std::round(255.f * colorValue(point - 2.f/6.f)));
+}
+
+std::vector<sf::Color> generatePalette(int colorTotal)
+{
+    std::vector<sf::Color> result;
+
+    for(int i = 0; i < colorTotal; ++i)
+    {
+	result.emplace_back(colorFromRange((float)i/(float)colorTotal));
+    }
+
+    return result;
+}
+
+std::vector< sf::Vector2f > genCircleShape(float radius, int precision)
+{
+    std::vector< sf::Vector2f > result;
+
+    for(int i=0; i < precision; ++i)
+    {
+	result.emplace_back(makeVector(radius, i*2*M_PI/precision));
+    }
+
+    return result;
+}
