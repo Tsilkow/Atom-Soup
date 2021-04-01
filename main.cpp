@@ -28,10 +28,11 @@ int main()
         
     AtomParameters AParams =
     {
-        generateAtomTypes(6, make_pair(2.5f, 7.5f), make_pair(0.25f, 0.75f), make_pair(25.f, 75.f)),
+        generateAtomTypes(6, make_pair(2.5f, 7.5f), make_pair(1.25f, 3.75f), make_pair(25.f, 75.f)),
 	1.f,
 	5.f,
-	0.02f
+	0.01f,
+	20
     };
 
     AParams.print();

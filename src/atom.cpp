@@ -117,6 +117,17 @@ void Atom::tick(sf::FloatRect boundaries)
     while(m_position.x > boundaries.left + boundaries.width) m_position.x -= boundaries.width;
     while(m_position.y < boundaries.top)                     m_position.y += boundaries.height;
     while(m_position.y > boundaries.top + boundaries.height) m_position.y -= boundaries.height;
+
+    m_trail.push_back(m_representation);
+    if(m_trail.size() > m_parameters->trailLength) m_trail.erase(m_trail.begin());
+    for(int i = 0; i < m_trail.size(); ++i)
+    {
+	float transparency = ((float)i+1)/(m_parameters->trailLength+1) * 255.f * 0.1f;
+	for(auto &v: m_trail[i])
+	{
+	    v.color.a = transparency;
+	}
+    }
     
     for(auto &v: m_representation)
     {
@@ -127,4 +138,8 @@ void Atom::tick(sf::FloatRect boundaries)
 void Atom::draw(sf::RenderTarget& target)
 {
     target.draw(&m_representation[0], m_representation.size(), sf::TriangleFan);
+    for(auto &t: m_trail)
+    {
+	target.draw(&t[0], t.size(), sf::TriangleFan);
+    }
 }

@@ -34,6 +34,7 @@ struct AtomParameters
     float peakRelStr; // peak relation strength - greatest strength the relation between two atoms can exert
     float peakRepStr; // peak repel strength
     float friction;
+    int trailLength;
     
     void print();
 };
@@ -49,7 +50,8 @@ class Atom
     sf::Vector2f m_position;
     sf::Vector2f m_velocity;
     sf::Vector2f m_force;
-    std::vector<sf::Vertex> m_representation;
+    std::vector< sf::Vertex > m_representation;
+    std::vector< std::vector< sf::Vertex > > m_trail;
 
     float calcRepelStr(float distance);
 	
