@@ -39,6 +39,12 @@ void printVector(sf::Vector2f a, bool enter)
     if(enter) std::cout << "\n";
 }
 
+sf::Vector2f connector(sf::Vector2f a, sf::Vector2f b, sf::FloatRect boundaries, bool wrapping)
+{
+    if(wrapping) return wrapConnector(a, b, boundaries);
+    else return a-b;
+}
+
 // vector from b to a
 sf::Vector2f wrapConnector(sf::Vector2f a, sf::Vector2f b, sf::FloatRect boundaries)
 {

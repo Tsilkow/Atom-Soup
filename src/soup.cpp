@@ -48,7 +48,8 @@ bool Soup::simulate()
 	    {
 		if(&a != &b) b.addForce(
 		       a.exertForce(b.getType(),
-				    wrapConnector(a.getPosition(), b.getPosition(), m_boundaries)));
+				    connector(a.getPosition(), b.getPosition(), m_boundaries,
+					      m_AParams->wrapping)));
 	    }
 	}
 

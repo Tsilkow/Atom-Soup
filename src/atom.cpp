@@ -22,6 +22,7 @@ void AtomParameters::print()
     std::cout << "peakRelStr=" << peakRelStr << "\n";
     std::cout << "peakRepStr=" << peakRepStr << "\n";
     std::cout << "friction=" << friction << "\n";
+    std::cout << "wrapping=" << wrapping << "\n";
 }
 
 std::vector< AtomType > generateAtomTypes
@@ -112,11 +113,38 @@ void Atom::tick(sf::FloatRect boundaries)
     m_velocity += m_force/m_parameters->types[m_type].weight;
     m_force = sf::Vector2f(0.f, 0.f);
     m_position += m_velocity;
-    
-    while(m_position.x < boundaries.left)                    m_position.x += boundaries.width;
-    while(m_position.x > boundaries.left + boundaries.width) m_position.x -= boundaries.width;
-    while(m_position.y < boundaries.top)                     m_position.y += boundaries.height;
-    while(m_position.y > boundaries.top + boundaries.height) m_position.y -= boundaries.height;
+
+    if(m_parameters->wrapping)
+    {
+	while(m_position.x < boundaries.left)                    m_position.x += boundaries.width;
+	while(m_position.x > boundaries.left + boundaries.width) m_position.x -= boundaries.width;
+	while(m_position.y < boundaries.top)                     m_position.y += boundaries.height;
+	while(m_position.y > boundaries.top + boundaries.height) m_position.y -= boundaries.height;
+    }
+    else
+    {
+	if(m_position.x < boundaries.left)
+	{
+	    m_position.x = boundaries.left;
+	    m_velocity.x = -m_velocity.x;
+	}
+	else if(m_position.x >= boundaries.left + boundaries.width)
+	{
+	    m_position.x = boundaries.left + boundaries.width;
+	    m_velocity.x = -m_velocity.x;
+	}
+	
+	if(m_position.y < boundaries.top)
+	{
+	    m_position.y = boundaries.top;
+	    m_velocity.y = -m_velocity.y;
+	}
+	else if(m_position.y >= boundaries.top + boundaries.height)
+	{
+	    m_position.y = boundaries.top + boundaries.height;
+	    m_velocity.y = -m_velocity.y;
+	}
+    }
 
     m_trail.push_back(m_representation);
     if(m_trail.size() > m_parameters->trailLength) m_trail.erase(m_trail.begin());

@@ -33,6 +33,8 @@ sf::Vector2f Random2f(sf::FloatRect boundaries);
 
 void printVector(sf::Vector2f a, bool enter=true);
 
+sf::Vector2f connector(sf::Vector2f a, sf::Vector2f b, sf::FloatRect boundaries, bool wrapping);
+
 sf::Vector2f wrapConnector(sf::Vector2f a, sf::Vector2f b, sf::FloatRect boundaries);
 
 float modulo(float a, float b);
