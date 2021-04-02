@@ -28,10 +28,10 @@ int main()
         
     AtomParameters AParams =
     {
-        generateAtomTypes(10, make_pair(2.5f, 7.5f), make_pair(2.5f, 5.f), make_pair(10.f, 90.f)),
+        generateAtomTypes(10, make_pair(5.f, 5.f), make_pair(2.5f, 5.f), make_pair(10.f, 90.f)),
 	1.f,
 	1.f,
-	0.01f,
+	0.1f,
 	20,
 	0.5f,
 	false

@@ -4,7 +4,9 @@
 Soup::Soup(AtomParameters* AParams, sf::RenderWindow* window, int atomTotal, sf::FloatRect boundaries):
     m_AParams(AParams),
     m_window(window),
-    m_boundaries(boundaries)
+    m_boundaries(boundaries),
+    m_scrollSpeed(5.f),
+    m_zoomSpeed(0.01f)
 {
     for(int i = 0; i < atomTotal; ++i)
     {
@@ -14,6 +16,27 @@ Soup::Soup(AtomParameters* AParams, sf::RenderWindow* window, int atomTotal, sf:
 			     //sf::Vector2f(0.f, 0.f));
 			     makeVector(RandomF(0.f, 10.f), RandomF(0, 2*M_PI)));
     }
+    
+    m_view.setCenter(sf::Vector2f(0.f, 0.f));
+    m_view.setSize(sf::Vector2f(m_boundaries.width, m_boundaries.height));
+    m_view.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
+    m_window->setView(m_view);
+
+    m_boundRepres.emplace_back(sf::Vector2f(m_boundaries.left,
+					    m_boundaries.top),
+			       sf::Color::White);
+    m_boundRepres.emplace_back(sf::Vector2f(m_boundaries.left + m_boundaries.width,
+					    m_boundaries.top),
+			       sf::Color::White);
+    m_boundRepres.emplace_back(sf::Vector2f(m_boundaries.left + m_boundaries.width,
+					    m_boundaries.top + m_boundaries.height),
+			       sf::Color::White);
+    m_boundRepres.emplace_back(sf::Vector2f(m_boundaries.left,
+					    m_boundaries.top + m_boundaries.height),
+			       sf::Color::White);
+    m_boundRepres.emplace_back(sf::Vector2f(m_boundaries.left,
+					    m_boundaries.top),
+			       sf::Color::White);
 }
 
 bool Soup::simulate()
@@ -40,6 +63,23 @@ bool Soup::simulate()
 			}
 		    }
 	    }
+	}
+
+	if(m_window->hasFocus())
+	{   
+	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up   ))
+		m_view.move(m_scrollSpeed * sf::Vector2f( 0.f, -1.f));
+	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down ))
+		m_view.move(m_scrollSpeed * sf::Vector2f( 0.f,  1.f));
+	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		m_view.move(m_scrollSpeed * sf::Vector2f( 1.f,  0.f));
+	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left ))
+		m_view.move(m_scrollSpeed * sf::Vector2f(-1.f,  0.f));
+	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Add))
+		m_view.zoom(1.f - m_zoomSpeed);
+	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract))
+		m_view.zoom(1.f + m_zoomSpeed);
+	    m_window->setView(m_view);
 	}
 
 	for(auto &a: m_atoms)
@@ -75,4 +115,5 @@ void Soup::draw()
     {
 	a.draw(*m_window);
     }
+    m_window->draw(&m_boundRepres[0], m_boundRepres.size(), sf::LineStrip);
 }

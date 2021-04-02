@@ -76,6 +76,14 @@ float modulo(float a, float b)
     return a;
 }
 
+float quickPower(float base, int power)
+{
+    if(power == 0) return 1.f;
+    if(power == 1) return base;
+    if(modulo(power, 2) == 0) return quickPower(base*base, power/2);
+    return quickPower(base, power-1)*base;
+}
+
 float colorValue(float point)
 {
     point = modulo(point, 1.f);

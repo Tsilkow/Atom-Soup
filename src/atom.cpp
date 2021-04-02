@@ -54,7 +54,6 @@ Atom::Atom(AtomParameters* parameters, int type, sf::Vector2f startPosition, sf:
     m_velocity(startVelocity),
     m_force(0.f, 0.f)
 {
-    printVector(startPosition);
     m_representation.emplace_back(m_position, m_parameters->types[m_type].color);
     for(auto &v: m_parameters->types[m_type].shape)
     {
@@ -72,7 +71,8 @@ void Atom::addForce(sf::Vector2f force)
 float Atom::calcRepelStr(float distance)
 {
     float size = m_parameters->types[m_type].size;
-    return cos(distance * M_PI/2.f/size) * m_parameters->peakRepStr;
+    return quickPower(distance/size-1.f) * m_parameters->peakRepStr;
+    //return cos(distance * M_PI/2.f/size) * m_parameters->peakRepStr;
     //return 1.f/((distance - size)/size);
 }
 

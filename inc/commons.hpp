@@ -39,6 +39,8 @@ sf::Vector2f wrapConnector(sf::Vector2f a, sf::Vector2f b, sf::FloatRect boundar
 
 float modulo(float a, float b);
 
+float quickPower(float base, int power=2);
+
 void printColor(sf::Color toPrint, bool enter=true);
 
 float colorValue(float point);
