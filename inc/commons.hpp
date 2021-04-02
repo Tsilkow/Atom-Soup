@@ -27,7 +27,7 @@ inline float RandomF(pairF range) {return RandomF(range.first, range.second); }
 
 sf::Vector2f makeVector(float length, float angle);
 
-sf::Vector2f Random2f(float lengthMin, float lengthMax, float lengthStep);
+sf::Vector2f Random2f(float lengthMin, float lengthMax, float lengthStep=0.01f);
 
 sf::Vector2f Random2f(sf::FloatRect boundaries);
 

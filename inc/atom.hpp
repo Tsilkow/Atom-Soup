@@ -35,6 +35,7 @@ struct AtomParameters
     float peakRepStr; // peak repel strength
     float friction;
     int trailLength;
+    float bounce;
     bool wrapping;
     
     void print();

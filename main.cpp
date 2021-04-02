@@ -28,11 +28,12 @@ int main()
         
     AtomParameters AParams =
     {
-        generateAtomTypes(6, make_pair(2.5f, 7.5f), make_pair(1.25f, 3.75f), make_pair(25.f, 75.f)),
+        generateAtomTypes(10, make_pair(2.5f, 7.5f), make_pair(2.5f, 5.f), make_pair(10.f, 90.f)),
 	1.f,
-	5.f,
+	1.f,
 	0.01f,
 	20,
+	0.5f,
 	false
     };
 
@@ -46,7 +47,7 @@ int main()
     mainView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
     window.setView(mainView);
 
-    Soup soup(&AParams, &window, 40, sf::FloatRect(-400.f, -400.f, 800.f, 800.f));
+    Soup soup(&AParams, &window, 200, sf::FloatRect(-400.f, -400.f, 800.f, 800.f));
 
     soup.simulate();
 	

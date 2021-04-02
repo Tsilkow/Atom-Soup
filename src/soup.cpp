@@ -12,7 +12,7 @@ Soup::Soup(AtomParameters* AParams, sf::RenderWindow* window, int atomTotal, sf:
 			     RandomI(0, m_AParams->types.size()-1),
 			     Random2f(m_boundaries),
 			     //sf::Vector2f(0.f, 0.f));
-			     makeVector(RandomF(0.f, 100.f), RandomF(0, 2*M_PI)));
+			     makeVector(RandomF(0.f, 10.f), RandomF(0, 2*M_PI)));
     }
 }
 
@@ -41,21 +41,24 @@ bool Soup::simulate()
 		    }
 	    }
 	}
-	
+
 	for(auto &a: m_atoms)
 	{
 	    for(auto &b: m_atoms)
 	    {
-		if(&a != &b) b.addForce(
-		       a.exertForce(b.getType(),
-				    connector(a.getPosition(), b.getPosition(), m_boundaries,
-					      m_AParams->wrapping)));
+		if(&a != &b)
+		{
+		    b.addForce(
+			   a.exertForce(b.getType(),
+					connector(a.getPosition(), b.getPosition(), m_boundaries,
+						  m_AParams->wrapping)));
+		}
 	    }
 	}
 
-	for(auto &a: m_atoms)
+	for(int i=0; i < m_atoms.size(); ++i)//for(auto &a: m_atoms)
 	{
-	    a.tick(m_boundaries);
+	    m_atoms[i].tick(m_boundaries);
 	}
 
 	draw();

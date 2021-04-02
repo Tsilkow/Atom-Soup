@@ -88,22 +88,40 @@ float Atom::calcRelStr(float distance, int targetType)
 
 sf::Vector2f Atom::exertForce(int targetType, sf::Vector2f connector)
 {
+    sf::Vector2f result(0.f, 0.f);
     float distance = length(connector);
-    // if the atoms are overlapping, they're always repelling
-    if(distance < m_parameters->types[m_type].size)
+    
+    if(distance <
+       m_parameters->types[m_type].relations[targetType].maxDistance +
+       m_parameters->types[m_type].size)
     {
-	return calcRepelStr(distance) * connector/distance * -1.f;
-    }
-    else
-    {
-	int relSign = m_parameters->types[m_type].relations[targetType].sign;
-	// if relation is neutral
-	if(relSign == 0) return sf::Vector2f(0.f, 0.f);
+	sf::Vector2f direction;
+	if(distance == 0.f) direction = Random2f(1.f, 1.f);
+	else direction = connector/distance;
+	
+	// if the atoms are overlapping, they're always repelling
+	if(distance < m_parameters->types[m_type].size)
+	{
+	    result = calcRepelStr(distance) * direction * -1.f;
+	}
 	else
 	{
-	    return calcRelStr(distance, targetType) * connector/distance * ((float)relSign);
+	    int relSign = m_parameters->types[m_type].relations[targetType].sign;
+	    // if relation is not neutral
+	    if(relSign != 0)
+	    {
+		result = calcRelStr(distance, targetType) * direction * ((float)relSign);
+	    }
+	}
+	if(isnan(result.x) || isnan(result.y))
+	{
+	    printVector(result);
+	    std::cout << targetType << " " << distance << " ";
+	    printVector(connector, true);
 	}
     }
+    
+    return result;
 }
 
 void Atom::tick(sf::FloatRect boundaries)
@@ -123,26 +141,27 @@ void Atom::tick(sf::FloatRect boundaries)
     }
     else
     {
-	if(m_position.x < boundaries.left)
+	float size = m_parameters->types[m_type].size;
+	if(m_position.x < boundaries.left + size)
 	{
-	    m_position.x = boundaries.left;
-	    m_velocity.x = -m_velocity.x;
+	    m_position.x = boundaries.left + size;
+	    m_velocity.x = -m_velocity.x * m_parameters->bounce;
 	}
-	else if(m_position.x >= boundaries.left + boundaries.width)
+	else if(m_position.x >= boundaries.left + boundaries.width - size)
 	{
-	    m_position.x = boundaries.left + boundaries.width;
-	    m_velocity.x = -m_velocity.x;
+	    m_position.x = boundaries.left + boundaries.width - size;
+	    m_velocity.x = -m_velocity.x * m_parameters->bounce;
 	}
 	
-	if(m_position.y < boundaries.top)
+	if(m_position.y < boundaries.top + size)
 	{
-	    m_position.y = boundaries.top;
-	    m_velocity.y = -m_velocity.y;
+	    m_position.y = boundaries.top + size;
+	    m_velocity.y = -m_velocity.y * m_parameters->bounce;
 	}
-	else if(m_position.y >= boundaries.top + boundaries.height)
+	else if(m_position.y >= boundaries.top + boundaries.height - size)
 	{
-	    m_position.y = boundaries.top + boundaries.height;
-	    m_velocity.y = -m_velocity.y;
+	    m_position.y = boundaries.top + boundaries.height - size;
+	    m_velocity.y = -m_velocity.y * m_parameters->bounce;
 	}
     }
 
