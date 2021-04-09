@@ -21,15 +21,20 @@ class Soup
     std::vector< Atom > m_atoms;
     sf::FloatRect m_boundaries;
     std::vector< sf::Vertex > m_boundRepres;
+    sf::Text m_fpsCounter;
     sf::RenderWindow* m_window;
-    sf::View m_view;
+    sf::View m_mainView;
+    sf::View m_textView;
     float m_scrollSpeed;
     float m_zoomSpeed;
+    int m_ticks;
     
     public:
-    Soup(AtomParameters* AParams, sf::RenderWindow* window, int atomTotal, sf::FloatRect boundaries);
+    Soup(AtomParameters* AParams, sf::RenderWindow* window, sf::Font* font, int atomTotal, sf::FloatRect boundaries);
 
-    bool simulate();
+    bool simulate(bool record=false);
     
-    void draw();
+    void capture();
+    
+    void draw(bool record=false);
 };

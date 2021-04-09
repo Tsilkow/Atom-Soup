@@ -1,6 +1,14 @@
 #include "commons.hpp"
 
 
+std::string strPrecRound(float value, short precision)
+{
+    std::stringstream ss;
+    ss.precision(precision);
+    ss << std::fixed << value;
+    return ss.str();
+}
+
 float length(sf::Vector2f a)
 {
     return sqrt(a.x*a.x + a.y*a.y);

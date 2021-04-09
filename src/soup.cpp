@@ -1,7 +1,7 @@
 #include "soup.hpp"
 
 
-Soup::Soup(AtomParameters* AParams, sf::RenderWindow* window, int atomTotal, sf::FloatRect boundaries):
+Soup::Soup(AtomParameters* AParams, sf::RenderWindow* window, sf::Font* font, int atomTotal, sf::FloatRect boundaries):
     m_AParams(AParams),
     m_window(window),
     m_boundaries(boundaries),
@@ -17,10 +17,13 @@ Soup::Soup(AtomParameters* AParams, sf::RenderWindow* window, int atomTotal, sf:
 			     makeVector(RandomF(0.f, 10.f), RandomF(0, 2*M_PI)));
     }
     
-    m_view.setCenter(sf::Vector2f(0.f, 0.f));
-    m_view.setSize(sf::Vector2f(m_boundaries.width, m_boundaries.height));
-    m_view.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
-    m_window->setView(m_view);
+    m_mainView.setCenter(sf::Vector2f(0.f, 0.f));
+    m_mainView.setSize(sf::Vector2f(m_boundaries.width, m_boundaries.height));
+    m_mainView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
+    m_window->setView(m_mainView);
+    m_textView.setCenter(sf::Vector2f(0.f, 0.f));
+    m_textView.setSize(sf::Vector2f(m_boundaries.width, m_boundaries.height));
+    m_textView.setViewport(sf::FloatRect(0.f, 0.f, 1.f, 1.f));
 
     m_boundRepres.emplace_back(sf::Vector2f(m_boundaries.left,
 					    m_boundaries.top),
@@ -37,10 +40,18 @@ Soup::Soup(AtomParameters* AParams, sf::RenderWindow* window, int atomTotal, sf:
     m_boundRepres.emplace_back(sf::Vector2f(m_boundaries.left,
 					    m_boundaries.top),
 			       sf::Color::White);
+
+    m_fpsCounter.setFont(*font);
+    m_fpsCounter.setCharacterSize(16);
+    m_fpsCounter.setPosition(m_boundaries.left, m_boundaries.top);
+    m_fpsCounter.setFillColor(sf::Color::White);
 }
 
-bool Soup::simulate()
+bool Soup::simulate(bool record)
 {
+    m_ticks = 0;
+    sf::Clock clock;
+    
     while(m_atoms.size() > 0)
     {
 	sf::Event event;
@@ -68,18 +79,17 @@ bool Soup::simulate()
 	if(m_window->hasFocus())
 	{   
 	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up   ))
-		m_view.move(m_scrollSpeed * sf::Vector2f( 0.f, -1.f));
+		m_mainView.move(m_scrollSpeed * sf::Vector2f( 0.f, -1.f));
 	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down ))
-		m_view.move(m_scrollSpeed * sf::Vector2f( 0.f,  1.f));
+		m_mainView.move(m_scrollSpeed * sf::Vector2f( 0.f,  1.f));
 	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-		m_view.move(m_scrollSpeed * sf::Vector2f( 1.f,  0.f));
+		m_mainView.move(m_scrollSpeed * sf::Vector2f( 1.f,  0.f));
 	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left ))
-		m_view.move(m_scrollSpeed * sf::Vector2f(-1.f,  0.f));
+		m_mainView.move(m_scrollSpeed * sf::Vector2f(-1.f,  0.f));
 	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Add))
-		m_view.zoom(1.f - m_zoomSpeed);
+		m_mainView.zoom(1.f - m_zoomSpeed);
 	    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Subtract))
-		m_view.zoom(1.f + m_zoomSpeed);
-	    m_window->setView(m_view);
+		m_mainView.zoom(1.f + m_zoomSpeed);
 	}
 
 	for(auto &a: m_atoms)
@@ -101,19 +111,40 @@ bool Soup::simulate()
 	    m_atoms[i].tick(m_boundaries);
 	}
 
-	draw();
+	if(modulo(m_ticks, 60) == 0)
+	{
+	    float currTime = clock.restart().asSeconds();
+	    float fps = 60.f / (currTime);
+
+	    m_fpsCounter.setString(strPrecRound(fps, 0));
+	}
+	
+	draw(record);
 	m_window->display();
+	++m_ticks;
     }
 
     return false;
 }
 
-void Soup::draw()
+void Soup::capture()
+{
+    sf::Texture result;
+    result.create(m_window->getSize().x, m_window->getSize().y);
+    result.update(*m_window);
+    result.copyToImage().saveToFile("captured/" + std::to_string(m_ticks) + ".png");
+}
+
+void Soup::draw(bool record)
 {
     m_window->clear();
+    m_window->setView(m_mainView);
     for(auto &a: m_atoms)
     {
 	a.draw(*m_window);
     }
     m_window->draw(&m_boundRepres[0], m_boundRepres.size(), sf::LineStrip);
+    if(record) capture();
+    m_window->setView(m_textView);
+    m_window->draw(m_fpsCounter);
 }

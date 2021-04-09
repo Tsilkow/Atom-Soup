@@ -6,6 +6,7 @@
 #include <memory>
 #include <math.h>
 #include <utility>
+#include <sstream>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -14,6 +15,8 @@
 
 typedef std::pair<int, int> pairI;
 typedef std::pair<float, float> pairF;
+
+std::string strPrecRound(float value, short precision);
 
 float length(sf::Vector2f a);
 

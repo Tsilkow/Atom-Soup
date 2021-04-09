@@ -7,8 +7,10 @@ void AtomParameters::print()
     {
 	std::cout << "{\n";
 	std::cout << "size=" << types[i].size << "\n";
-	std::cout << "weight=" << types[i].size << "\n";
-	std::cout << "color=" << types[i].size << "\n";
+	std::cout << "weight=" << types[i].weight << "\n";
+	std::cout << "color=(" << ((int)types[i].color.r) << ", "
+		  << ((int)types[i].color.g) << ", "
+		  << ((int)types[i].color.b) << ")\n";
 	std::cout << "relations={ ";
 	for(int j = 0; j < types[i].relations.size(); ++j)
 	{
@@ -71,7 +73,8 @@ void Atom::addForce(sf::Vector2f force)
 float Atom::calcRepelStr(float distance)
 {
     float size = m_parameters->types[m_type].size;
-    return quickPower(distance/size-1.f) * m_parameters->peakRepStr;
+    //return m_parameters->peakRepStr;
+    return sqrt(1.f - distance/size) * m_parameters->peakRepStr;
     //return cos(distance * M_PI/2.f/size) * m_parameters->peakRepStr;
     //return 1.f/((distance - size)/size);
 }
