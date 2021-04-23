@@ -55,7 +55,7 @@ class Atom
     std::vector< sf::Vertex > m_representation;
     std::vector< std::vector< sf::Vertex > > m_trail;
 
-    float calcRepelStr(float distance);
+    float calcRepelStr(float distance, float sumOfRadii);
 	
     float calcRelStr(float distance, int targetType);
 

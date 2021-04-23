@@ -70,11 +70,10 @@ void Atom::addForce(sf::Vector2f force)
     m_force += force;
 }
 
-float Atom::calcRepelStr(float distance)
+float Atom::calcRepelStr(float distance, float sumOfRadii)
 {
-    float size = m_parameters->types[m_type].size;
-    //return m_parameters->peakRepStr;
-    return sqrt(1.f - distance/size) * m_parameters->peakRepStr;
+    return m_parameters->peakRepStr;
+    //return sqrt(1.f - distance/(sumOfRadii)) * m_parameters->peakRepStr;
     //return cos(distance * M_PI/2.f/size) * m_parameters->peakRepStr;
     //return 1.f/((distance - size)/size);
 }
@@ -85,7 +84,7 @@ float Atom::calcRelStr(float distance, int targetType)
     float maxDist = m_parameters->types[m_type].relations[targetType].maxDistance;
 
     return std::max(0.f,
-		    m_parameters->peakRelStr * (1 - 2.f/(maxDist - size) *
+		    m_parameters->peakRelStr * (1 + 2.f/(maxDist - size) *
 						std::fabs(distance - (maxDist + size)/2.f)));
 }
 
@@ -99,13 +98,15 @@ sf::Vector2f Atom::exertForce(int targetType, sf::Vector2f connector)
        m_parameters->types[m_type].size)
     {
 	sf::Vector2f direction;
+	float sumOfRadii = m_parameters->types[m_type].size + m_parameters->types[targetType].size;
 	if(distance == 0.f) direction = Random2f(1.f, 1.f);
 	else direction = connector/distance;
 	
 	// if the atoms are overlapping, they're always repelling
-	if(distance < m_parameters->types[m_type].size)
+	
+	if(distance < sumOfRadii)
 	{
-	    result = calcRepelStr(distance) * direction * -1.f;
+	    result = calcRepelStr(distance, sumOfRadii) * direction * -1.f;
 	}
 	else
 	{
