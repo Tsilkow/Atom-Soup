@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
         
     AtomParameters AParams =
     {
-        generateAtomTypes(4, make_pair(5.f, 5.f), make_pair(5.f, 5.f), make_pair(10.f, 100.f)),
+        generateAtomTypes(6, make_pair(5.f, 5.f), make_pair(5.f, 5.f), make_pair(10.f, 50.f)),
 	1.f,  // peakRelStr
 	2.f,  // peakRepStr
 	0.2f, // friction
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
 	return 1;
     }
 
-    Soup soup(&AParams, &window, &font, 200, sf::FloatRect(-400.f, -400.f, 800.f, 800.f));
+    Soup soup(&AParams, &window, &font, 300, sf::FloatRect(-400.f, -400.f, 800.f, 800.f));
 
     soup.simulate(false);
 	

@@ -14,7 +14,7 @@ void AtomParameters::print()
 	std::cout << "relations={ ";
 	for(int j = 0; j < types[i].relations.size(); ++j)
 	{
-	    std::cout << "{ " << types[i].relations[j].sign << " " << types[i].relations[j].maxDistance << " }";
+	    std::cout << "{ " << types[i].relations[j].strength << " " << types[i].relations[j].maxDistance << " }";
 	    if(j != types[i].relations.size()-1) std::cout << ", ";
 	    else std::cout << " } \n";
 	}
@@ -42,7 +42,7 @@ std::vector< AtomType > generateAtomTypes
 	
 	for(int j=0; j < typeTotal; ++j)
 	{
-	    result.back().relations.push_back({RandomI(-1, 1), RandomF(maxDistanceRange)});
+	    result.back().relations.push_back({RandomF(-1.f, 1.f), RandomF(maxDistanceRange)});
 	}
     }
 
@@ -110,12 +110,8 @@ sf::Vector2f Atom::exertForce(int targetType, sf::Vector2f connector)
 	}
 	else
 	{
-	    int relSign = m_parameters->types[m_type].relations[targetType].sign;
-	    // if relation is not neutral
-	    if(relSign != 0)
-	    {
-		result = calcRelStr(distance, targetType) * direction * ((float)relSign);
-	    }
+	    result = calcRelStr(distance, targetType) * direction
+		* m_parameters->types[m_type].relations[targetType].strength;
 	}
 	if(isnan(result.x) || isnan(result.y))
 	{

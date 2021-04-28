@@ -15,7 +15,8 @@
 
 struct Relation
 {
-    int sign; // -1 = repulsion, 0 = neutral, 1 = attraction
+    //int sign; // -1 = repulsion, 0 = neutral, 1 = attraction
+    float strength;
     float maxDistance;  // maximal relation distance - how far away can two atoms be to still affect each other
 };
 

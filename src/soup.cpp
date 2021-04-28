@@ -143,8 +143,8 @@ void Soup::draw(bool record)
     {
 	a.draw(*m_window);
     }
-    m_window->draw(&m_boundRepres[0], m_boundRepres.size(), sf::LineStrip);
-    if(record) capture();
+    if(!record) m_window->draw(&m_boundRepres[0], m_boundRepres.size(), sf::LineStrip);
+    if(record)  capture();
     m_window->setView(m_textView);
     m_window->draw(m_fpsCounter);
 }
