@@ -2,7 +2,7 @@
 Emergent behaviours from simple rules.
 Continous version of cellular automata.
 
-[![Example Simulation](http://img.youtube.com/vi/e9Kxr0SG-i8/0.jpg)](http://www.youtube.com/watch?v=e9Kxr0SG-i8)
+[![Example Simulation](http://img.youtube.com/vi/0NRJ3RAkCpE/0.jpg)](https://www.youtube.com/watch?v=0NRJ3RAkCpE)
 
 Each atom type has specified weight (and optionally size) as well as attraction, repulsion or neutral relation with all atom types (including its own). Atom types are generated procedurally, so that different seed means not only different starting positions, but completely different atoms and interactions between them.
 

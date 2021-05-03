@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
         
     AtomParameters AParams =
     {
-        generateAtomTypes(6, make_pair(5.f, 5.f), make_pair(5.f, 5.f), make_pair(10.f, 50.f)),
+        generateAtomTypes(4, make_pair(5.f, 5.f), make_pair(5.f, 5.f), make_pair(10.f, 50.f)),
 	1.f,  // peakRelStr
 	2.f,  // peakRepStr
 	0.2f, // friction
