@@ -1,6 +1,5 @@
 # Atom Soup
-Emergent behaviours from simple rules.
-Continous version of cellular automata.
+Particle simulation with simple rules, from which emerges continuous variant of cellular automata.
 
 [![Example Simulation](http://img.youtube.com/vi/0NRJ3RAkCpE/0.jpg)](https://www.youtube.com/watch?v=0NRJ3RAkCpE)
 
